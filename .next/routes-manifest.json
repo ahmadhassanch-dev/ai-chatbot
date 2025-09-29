@@ -18,16 +18,7 @@
     "afterFiles": [],
     "fallback": []
   },
-  "dynamicRoutes": [
-    {
-      "page": "/api/auth/[...nextauth]",
-      "regex": "^/api/auth/(.+?)(?:/)?$",
-      "routeKeys": {
-        "nxtPnextauth": "nxtPnextauth"
-      },
-      "namedRegex": "^/api/auth/(?<nxtPnextauth>.+?)(?:/)?$"
-    }
-  ],
+  "dynamicRoutes": [],
   "staticRoutes": [
     {
       "page": "/",
@@ -40,18 +31,6 @@
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
-    },
-    {
-      "page": "/auth/signin",
-      "regex": "^/auth/signin(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/auth/signin(?:/)?$"
-    },
-    {
-      "page": "/auth/signup",
-      "regex": "^/auth/signup(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/auth/signup(?:/)?$"
     },
     {
       "page": "/chat",

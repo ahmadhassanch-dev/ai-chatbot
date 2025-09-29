@@ -1,14 +1,13 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useSession, signOut } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Send, Bot, User, LogOut, Settings, Plus, MessageSquare, Sparkles } from "lucide-react"
+import { Send, Bot, User, Settings, Plus, MessageSquare, Sparkles, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link"
 import axios from "axios"
 
 interface Message {
@@ -19,19 +18,11 @@ interface Message {
 }
 
 export default function ChatPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/signin")
-    }
-  }, [status, router])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -80,7 +71,7 @@ export default function ChatPage() {
       console.error("Error sending message:", error)
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Sorry, I'm having trouble connecting. Please try again.",
+        content: "Sorry, I'm having trouble connecting. Please try again later.",
         role: "assistant",
         timestamp: new Date(),
       }
@@ -91,20 +82,8 @@ export default function ChatPage() {
     }
   }
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: "/auth/signin" })
-  }
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"
-        />
-      </div>
-    )
+  const startNewChat = () => {
+    setMessages([])
   }
 
   return (
@@ -117,7 +96,7 @@ export default function ChatPage() {
           className="w-64 bg-white/80 backdrop-blur-sm border-r border-gray-200 flex flex-col"
         >
           <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
@@ -127,12 +106,19 @@ export default function ChatPage() {
                 </h1>
               </div>
             </div>
+            <Link href="/">
+              <Button variant="outline" size="sm" className="w-full">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Home
+              </Button>
+            </Link>
           </div>
 
           <div className="flex-1 p-4">
             <Button
               variant="outline"
               className="w-full mb-4 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50"
+              onClick={startNewChat}
             >
               <Plus className="w-4 h-4 mr-2" />
               New Chat
@@ -149,28 +135,23 @@ export default function ChatPage() {
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center space-x-3 mb-3">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={session?.user?.image || ""} />
-                <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                  {session?.user?.name?.charAt(0) || "U"}
+                <AvatarFallback className="bg-gradient-to-r from-green-500 to-blue-600 text-white">
+                  <User className="w-4 h-4" />
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {session?.user?.name || "User"}
+                <p className="text-sm font-medium text-gray-900">
+                  Anonymous User
                 </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {session?.user?.email}
+                <p className="text-xs text-gray-500">
+                  No login required
                 </p>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm" className="flex-1">
-                <Settings className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="sm" className="flex-1" onClick={handleSignOut}>
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
+            <Button variant="outline" size="sm" className="w-full">
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
           </div>
         </motion.div>
 
@@ -189,7 +170,7 @@ export default function ChatPage() {
               <div>
                 <h2 className="font-semibold text-lg text-gray-900">AI Assistant</h2>
                 <p className="text-sm text-gray-500">
-                  {isTyping ? "Typing..." : "Ready to help you"}
+                  {isTyping ? "Thinking..." : "Ready to help you"}
                 </p>
               </div>
             </div>
@@ -212,7 +193,7 @@ export default function ChatPage() {
                   </h3>
                   <p className="text-gray-600 max-w-md mx-auto">
                     I&apos;m here to help you with questions, creative tasks, problem-solving, and more. 
-                    What would you like to talk about?
+                    What would you like to talk about today?
                   </p>
                 </motion.div>
               ) : (
@@ -254,7 +235,6 @@ export default function ChatPage() {
 
                     {message.role === "user" && (
                       <Avatar className="h-8 w-8 mt-1">
-                        <AvatarImage src={session?.user?.image || ""} />
                         <AvatarFallback className="bg-gradient-to-r from-green-500 to-blue-600 text-white">
                           <User className="w-4 h-4" />
                         </AvatarFallback>
@@ -313,7 +293,7 @@ export default function ChatPage() {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type your message..."
+                  placeholder="Type your message here..."
                   className="pr-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                   disabled={isLoading}
                 />

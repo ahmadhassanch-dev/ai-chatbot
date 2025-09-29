@@ -1,14 +1,24 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { Bot, Sparkles, MessageSquare, Zap, Shield, Globe, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
-  const { data: session } = useSession()
+  const router = useRouter()
+  
+  useEffect(() => {
+    // Auto-redirect to chat after 3 seconds
+    const timer = setTimeout(() => {
+      router.push('/chat')
+    }, 3000)
+    
+    return () => clearTimeout(timer)
+  }, [router])
 
   const features = [
     {
@@ -52,24 +62,11 @@ export default function HomePage() {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              {session ? (
-                <Link href="/chat">
-                  <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-                    Open Chat
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link href="/auth/signin">
-                    <Button variant="ghost">Sign In</Button>
-                  </Link>
-                  <Link href="/auth/signup">
-                    <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-                      Get Started
-                    </Button>
-                  </Link>
-                </>
-              )}
+              <Link href="/chat">
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+                  Open Chat
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -107,40 +104,26 @@ export default function HomePage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {session ? (
-                <Link href="/chat">
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8 py-4 rounded-full transform hover:scale-105 transition-all duration-200"
-                  >
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    Start Chatting
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link href="/auth/signup">
-                    <Button 
-                      size="lg" 
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8 py-4 rounded-full transform hover:scale-105 transition-all duration-200"
-                    >
-                      Get Started Free
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
-                  </Link>
-                  <Link href="/auth/signin">
-                    <Button 
-                      variant="outline" 
-                      size="lg" 
-                      className="text-lg px-8 py-4 rounded-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50"
-                    >
-                      Sign In
-                    </Button>
-                  </Link>
-                </>
-              )}
+              <Link href="/chat">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8 py-4 rounded-full transform hover:scale-105 transition-all duration-200"
+                >
+                  <MessageSquare className="w-5 h-5 mr-2" />
+                  Start Chatting Now
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </div>
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="mt-4 text-sm text-gray-500"
+            >
+              Redirecting to chat in 3 seconds...
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -209,20 +192,18 @@ export default function HomePage() {
                 Ready to Start Your AI Journey?
               </h2>
               <p className="text-xl mb-8 text-blue-100">
-                Join thousands of users who are already experiencing the future of AI conversation.
+                Experience the future of AI conversation right now, no signup required.
               </p>
-              {!session && (
-                <Link href="/auth/signup">
-                  <Button 
-                    size="lg" 
-                    variant="secondary"
-                    className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 rounded-full transform hover:scale-105 transition-all duration-200"
-                  >
-                    Start Your Free Account
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-              )}
+              <Link href="/chat">
+                <Button 
+                  size="lg" 
+                  variant="secondary"
+                  className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 rounded-full transform hover:scale-105 transition-all duration-200"
+                >
+                  Start Chatting Now
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </motion.div>
@@ -239,7 +220,7 @@ export default function HomePage() {
               <h3 className="text-xl font-bold">AI Assistant</h3>
             </div>
             <p className="text-gray-400">
-              Powered by Gemini AI • Built with Next.js • Deployed on Vercel
+              Powered by Gemini AI • Built with Next.js • No Login Required
             </p>
           </div>
         </div>
