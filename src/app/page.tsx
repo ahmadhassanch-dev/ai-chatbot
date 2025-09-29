@@ -5,20 +5,7 @@ import Link from "next/link"
 import { Bot, Sparkles, MessageSquare, Zap, Shield, Globe, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-
 export default function HomePage() {
-  const router = useRouter()
-  
-  useEffect(() => {
-    // Auto-redirect to chat after 3 seconds
-    const timer = setTimeout(() => {
-      router.push('/chat')
-    }, 3000)
-    
-    return () => clearTimeout(timer)
-  }, [router])
 
   const features = [
     {
@@ -115,15 +102,6 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
-            
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="mt-4 text-sm text-gray-500"
-            >
-              Redirecting to chat in 3 seconds...
-            </motion.div>
           </motion.div>
         </div>
       </section>
