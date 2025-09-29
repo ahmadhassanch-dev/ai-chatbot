@@ -1,16 +1,7 @@
 {
   "version": 2,
-  "name": "ai-chatbot",
-  "builds": [
-    {
-      "src": "chatbot-frontend/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/chatbot-frontend/$1"
-    }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "framework": "nextjs"
 }
